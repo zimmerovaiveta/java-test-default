@@ -22,6 +22,7 @@ import java.io.IOException;
  */
 @Configuration
 public class AppConfiguration {
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

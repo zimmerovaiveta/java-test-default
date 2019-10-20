@@ -1,5 +1,6 @@
 package com.etnetera.hr.data;
 
+import com.etnetera.hr.dto.JavaScriptFrameworkDto;
 import com.fasterxml.jackson.core.Version;
 
 import javax.persistence.Column;
@@ -7,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 /**
@@ -25,12 +23,9 @@ public class JavaScriptFramework {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Size(min= 2, max = 30)
-	@NotEmpty
 	private String name;
 
 	@Column(nullable = false)
-	@NotNull
 	private Version version;
 
 	@Column
@@ -50,7 +45,12 @@ public class JavaScriptFramework {
 		this.hypeLevel = hypeLevel;
 	}
 
-	public Long getId() {
+	public JavaScriptFramework (JavaScriptFrameworkDto dto) {
+		 this(dto.getName(), dto.getVersion(), dto.getDeprecationDate(), dto.getHypeLevel());
+	}
+
+
+    public Long getId() {
 		return id;
 	}
 

@@ -1,6 +1,7 @@
 package com.etnetera.hr.controller;
 
 import com.etnetera.hr.data.JavaScriptFramework;
+import com.etnetera.hr.dto.JavaScriptFrameworkDto;
 import com.etnetera.hr.service.JavascriptFrameworkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 /**
  * Simple REST controller for accessing application logic.
@@ -33,34 +35,34 @@ public class JavaScriptFrameworkController extends EtnRestController {
 
 
 	@GetMapping("/frameworks")
-	public Iterable<JavaScriptFramework> frameworks() {
+	public Collection<JavaScriptFrameworkDto> frameworks() {
 		return service.findAll();
 	}
 
 	@PostMapping("/frameworks")
-	public JavaScriptFramework createFramework(@Valid @RequestBody JavaScriptFramework framework) {
-			return service.createFramework(framework);
+	public JavaScriptFrameworkDto createFramework(@Valid @RequestBody JavaScriptFrameworkDto framework) {
+			return service.createFramework(new JavaScriptFramework(framework));
 	}
 
 	@GetMapping("/frameworks/{id}")
-	public JavaScriptFramework findFramework(@PathVariable @NotNull long id) {
+	public JavaScriptFrameworkDto findFramework(@PathVariable @NotNull long id) {
 		return service.getFramework(id);
 	}
 
 	@GetMapping("/frameworks/findByName")
-	public Iterable<JavaScriptFramework> findByName(@RequestParam(value="name") @NotBlank @Size(min= 2, max = 30) String name) {
+	public Collection<JavaScriptFrameworkDto> findByName(@RequestParam(value="name") @NotBlank @Size(min= 2, max = 30) String name) {
 		return service.findByName(name);
 	}
 
 	@GetMapping("/frameworks/findDeprecated")
-	public Iterable<JavaScriptFramework> findDeprecated(@RequestParam(value = "deprecated", defaultValue = "false") boolean deprecated) {
+	public Collection<JavaScriptFrameworkDto> findDeprecated(@RequestParam(value = "deprecated", defaultValue = "false") boolean deprecated) {
 		return service.findDeprecated(deprecated);
 	}
 
 	@PutMapping("/frameworks/{id}")
-	public JavaScriptFramework updateFramework(@Valid @RequestBody JavaScriptFramework updatedFramework, @PathVariable @NotNull Long id) {
+	public JavaScriptFrameworkDto updateFramework(@Valid @RequestBody JavaScriptFrameworkDto updatedFramework, @PathVariable @NotNull Long id) {
 
-		return service.updateFramework(updatedFramework, id);
+		return service.updateFramework(new JavaScriptFramework(updatedFramework), id);
 	}
 
 	@DeleteMapping("/frameworks/{id}")

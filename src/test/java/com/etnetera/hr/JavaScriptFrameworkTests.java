@@ -1,6 +1,7 @@
 package com.etnetera.hr;
 
 import com.etnetera.hr.data.JavaScriptFramework;
+import com.etnetera.hr.dto.JavaScriptFrameworkDto;
 import com.etnetera.hr.repository.JavaScriptFrameworkRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
@@ -48,12 +49,12 @@ public class JavaScriptFrameworkTests {
 	private final Version VERSION_2 = new Version(2, 2, 2, "", "", null);
 	private final Version VERSION_3 = new Version(3, 3, 3, "", "", null);
 
-	private JavaScriptFramework react_1 = new JavaScriptFramework("ReactJS", VERSION_1, NOW.minusYears(10), 4.0);
-	private JavaScriptFramework react_2 = new JavaScriptFramework("ReactJS", VERSION_2, NOW.minusYears(8), 5.0);
-	private JavaScriptFramework react_3 = new JavaScriptFramework("ReactJS", VERSION_3, null, 9.0);
-	private JavaScriptFramework vue_1 = new JavaScriptFramework("Vue.js", VERSION_2, NOW.minusYears(5), 4.0);
-	private JavaScriptFramework vue_2 = new JavaScriptFramework("Vue.js", VERSION_2, NOW.minusYears(2), 6.0);
-	private JavaScriptFramework vue_3 = new JavaScriptFramework("Vue.js", VERSION_3, null, 8.0);
+	private JavaScriptFrameworkDto react_1 = new JavaScriptFrameworkDto("ReactJS", VERSION_1, NOW.minusYears(10), 4.0);
+	private JavaScriptFrameworkDto react_2 = new JavaScriptFrameworkDto("ReactJS", VERSION_2, NOW.minusYears(8), 5.0);
+	private JavaScriptFrameworkDto react_3 = new JavaScriptFrameworkDto("ReactJS", VERSION_3, null, 9.0);
+	private JavaScriptFrameworkDto vue_1 = new JavaScriptFrameworkDto("Vue.js", VERSION_2, NOW.minusYears(5), 4.0);
+	private JavaScriptFrameworkDto vue_2 = new JavaScriptFrameworkDto("Vue.js", VERSION_2, NOW.minusYears(2), 6.0);
+	private JavaScriptFrameworkDto vue_3 = new JavaScriptFrameworkDto("Vue.js", VERSION_3, null, 8.0);
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -66,17 +67,17 @@ public class JavaScriptFrameworkTests {
 	private JavaScriptFrameworkRepository repository;
 
 	private void prepareSimpleData() throws Exception {
-		repository.save(react_1);
-		repository.save(vue_1);
+		repository.save(new JavaScriptFramework(react_1));
+		repository.save(new JavaScriptFramework(vue_1));
 	}
 
 	private void prepareExtendedData() throws Exception {
-		repository.save(react_1);
-		repository.save(react_2);
-		repository.save(react_3);
-		repository.save(vue_1);
-		repository.save(vue_2);
-		repository.save(vue_3);
+		repository.save(new JavaScriptFramework(react_1));
+		repository.save(new JavaScriptFramework(react_2));
+		repository.save(new JavaScriptFramework(react_3));
+		repository.save(new JavaScriptFramework(vue_1));
+		repository.save(new JavaScriptFramework(vue_2));
+		repository.save(new JavaScriptFramework(vue_3));
 	}
 
 	// ****************** SAVE **********************
@@ -97,7 +98,7 @@ public class JavaScriptFrameworkTests {
 
 	@Test
 	public void addFrameworkInvalid() throws JsonProcessingException, Exception {
-		JavaScriptFramework framework = new JavaScriptFramework("ReactJs", null, null, null);
+        JavaScriptFrameworkDto framework = new JavaScriptFrameworkDto("ReactJs", null, null, null);
 
 		mockMvc.perform(post("/frameworks").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(framework)))
 				.andExpect(status().isBadRequest())
@@ -163,8 +164,8 @@ public class JavaScriptFrameworkTests {
 				.andExpect(jsonPath("$[0].id", is(2)))
 				.andExpect(jsonPath("$[0].name", is("Vue.js")));
 
-		JavaScriptFramework framework = new JavaScriptFramework("ReactJS", VERSION_3, NOW, 4.0);
-		repository.save(framework);
+        JavaScriptFrameworkDto framework = new JavaScriptFrameworkDto("ReactJS", VERSION_3, NOW, 4.0);
+		repository.save(new JavaScriptFramework(framework));
 
 		mockMvc.perform(get("/frameworks/findByName").param("name", "reactjs"))
 				.andExpect(status().isOk())
@@ -269,7 +270,6 @@ public class JavaScriptFrameworkTests {
 				.andExpect(jsonPath("$.errors[0].message", is("NotEmpty")));
 
 		vue_1.setName("A");
-		JavaScriptFramework updatedVue = new JavaScriptFramework(null, null, NOW, null);
 		mockMvc.perform(put("/frameworks/2").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(vue_1)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.errors[0].field", is("name")))
