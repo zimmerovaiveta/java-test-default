@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 /**
@@ -22,10 +25,12 @@ public class JavaScriptFramework {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(nullable = false, length = 30)
+	@Size(min= 2, max = 30)
+	@NotEmpty
 	private String name;
 
 	@Column(nullable = false)
+	@NotNull
 	private Version version;
 
 	@Column
@@ -35,12 +40,7 @@ public class JavaScriptFramework {
 	private Double hypeLevel;
 
 
-
 	public JavaScriptFramework() {
-	}
-
-	public JavaScriptFramework(String name) {
-		this.name = name;
 	}
 
 	public JavaScriptFramework(String name, Version version, LocalDate deprecationDate, Double hypeLevel) {

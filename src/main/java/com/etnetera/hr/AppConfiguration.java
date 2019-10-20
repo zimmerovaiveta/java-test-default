@@ -17,6 +17,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
+/**
+ * Configuration class for shared bean configurations.
+ */
 @Configuration
 public class AppConfiguration {
     @Bean

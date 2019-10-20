@@ -1,17 +1,22 @@
 package com.etnetera.hr.controller;
 
 import com.etnetera.hr.data.JavaScriptFramework;
-import com.etnetera.hr.repository.JavaScriptFrameworkRepository;
+import com.etnetera.hr.service.JavascriptFrameworkService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Simple REST controller for accessing application logic.
@@ -20,51 +25,47 @@ import java.util.Optional;
  *
  */
 @RestController
+@Validated
 public class JavaScriptFrameworkController extends EtnRestController {
 
-	private final JavaScriptFrameworkRepository repository;
-
 	@Autowired
-	public JavaScriptFrameworkController(JavaScriptFrameworkRepository repository) {
-		this.repository = repository;
-	}
+	private JavascriptFrameworkService service;
+
 
 	@GetMapping("/frameworks")
 	public Iterable<JavaScriptFramework> frameworks() {
-		return repository.findAll();
+		return service.findAll();
 	}
 
 	@PostMapping("/frameworks")
-	public JavaScriptFramework createFramework(@RequestBody JavaScriptFramework framework) {
-
-			return repository.save(framework);
+	public JavaScriptFramework createFramework(@Valid @RequestBody JavaScriptFramework framework) {
+			return service.createFramework(framework);
 	}
 
 	@GetMapping("/frameworks/{id}")
-	public Optional<JavaScriptFramework> findFramework(@PathVariable Long id) {
-		return repository.findById(id);
+	public JavaScriptFramework findFramework(@PathVariable @NotNull long id) {
+		return service.getFramework(id);
+	}
+
+	@GetMapping("/frameworks/findByName")
+	public Iterable<JavaScriptFramework> findByName(@RequestParam(value="name") @NotBlank @Size(min= 2, max = 30) String name) {
+		return service.findByName(name);
+	}
+
+	@GetMapping("/frameworks/findDeprecated")
+	public Iterable<JavaScriptFramework> findDeprecated(@RequestParam(value = "deprecated", defaultValue = "false") boolean deprecated) {
+		return service.findDeprecated(deprecated);
 	}
 
 	@PutMapping("/frameworks/{id}")
-	JavaScriptFramework updateFramework(@RequestBody JavaScriptFramework updatedFramework, @PathVariable Long id) {
+	public JavaScriptFramework updateFramework(@Valid @RequestBody JavaScriptFramework updatedFramework, @PathVariable @NotNull Long id) {
 
-		return repository.findById(id)
-				.map(framework -> {
-					framework.setName(updatedFramework.getName());
-					framework.setVersion(updatedFramework.getVersion());
-					framework.setDeprecationDate(updatedFramework.getDeprecationDate());
-					framework.setHypeLevel(updatedFramework.getHypeLevel());
-					return repository.save(framework);
-				})
-				.orElseGet(() -> {
-					updatedFramework.setId(id);
-					return repository.save(updatedFramework);
-				});
+		return service.updateFramework(updatedFramework, id);
 	}
 
 	@DeleteMapping("/frameworks/{id}")
-	void deleteEmployee(@PathVariable Long id) {
-		repository.deleteById(id);
+	public void deleteFramework(@PathVariable @NotNull Long id) {
+		service.deleteFramework(id);
 	}
 
 }
